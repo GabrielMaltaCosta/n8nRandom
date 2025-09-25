@@ -1,15 +1,15 @@
-import { IDataObject, INodeExecutionData, INodeType, INodeTypeDescription } from 'n8n-workflow';
+import {
+	IExecuteFunctions,
+	INodeExecutionData,
+	INodeType,
+	INodeTypeDescription,
+	NodeOutput,
+} from 'n8n-workflow';
 import fetch from 'node-fetch';
 
-interface INodeExecuteContext {
-	getInputData(): INodeExecutionData[];
-	getNodeParameter(name: string, index: number): unknown;
-	helpers: {
-		returnJsonArray(items: IDataObject[]): INodeExecutionData[];
-	};
-}
+const BASE_URL = 'https://www.random.org/integers/';
 
-async function TrueRandomNumberGenerator(min: number, max: number): Promise<number> {
+async function generateRandomNumber(min: number, max: number): Promise<number> {
 	const params = new URLSearchParams({
 		num: '1',
 		min: min.toString(),
@@ -20,7 +20,7 @@ async function TrueRandomNumberGenerator(min: number, max: number): Promise<numb
 		rnd: 'new',
 	});
 
-	const url = `https://www.random.org/integers/?${params.toString()}`;
+	const url = new URL(`?${params.toString()}`, BASE_URL).toString();
 
 	try {
 		const res = await fetch(url);
@@ -39,9 +39,9 @@ export class Random implements INodeType {
 		version: 1,
 		icon: 'file:random-img.svg',
 		description:
-			'Node para mostrar um número aleatório entre o mínimo e máximo informado pelo usuarioa',
+			'Node para mostrar um número aleatório entre o mínimo e máximo informado pelo usuário',
 		defaults: {
-			name: 'Random',
+			name: 'True Random Number Generator',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -65,7 +65,7 @@ export class Random implements INodeType {
 		],
 	};
 
-	async execute(this: INodeExecuteContext): Promise<INodeExecutionData[][]> {
+	async execute(this: IExecuteFunctions): Promise<NodeOutput> {
 		const items = this.getInputData();
 		const results: INodeExecutionData[] = [];
 
@@ -73,7 +73,7 @@ export class Random implements INodeType {
 			const min = this.getNodeParameter('min', i) as number;
 			const max = this.getNodeParameter('max', i) as number;
 
-			const random = await TrueRandomNumberGenerator(min, max);
+			const random = await generateRandomNumber(min, max);
 
 			results.push({
 				json: {
