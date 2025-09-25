@@ -18,7 +18,6 @@
   "engines": {
     "node": ">=20.15"
   },
-  "main": "index.js",
   "scripts": {
     "build": "npx rimraf dist && tsc && gulp build:icons",
     "dev": "tsc --watch",
@@ -32,10 +31,7 @@
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
-    ],
+    "credentials": [],
     "nodes": [
       "dist/nodes"
     ]
